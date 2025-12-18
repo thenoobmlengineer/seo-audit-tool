@@ -25,3 +25,5 @@ The audit is processed via an n8n automation and delivered by email.
 
 ## 📁 Project Structure
 
+🔗 Live Demo:  
+https://thenoobmlengineer.github.io/seo-audit-tool/
