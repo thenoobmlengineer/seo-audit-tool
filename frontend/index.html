@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SEO Audit Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1f2937;
+    }
+
+    .card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin: 0 0 8px;
+      text-align: center;
+    }
+
+    p.subtitle {
+      font-size: 0.95rem;
+      color: #6b7280;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #6366f1;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #4f46e5;
+    }
+
+    button:disabled {
+      background: #a5b4fc;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .status.success {
+      color: #059669;
+    }
+
+    .status.error {
+      color: #dc2626;
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h1>Analyze Website</h1>
+    <p class="subtitle">
+      Analyze Any Website And Get On-Page SEO Audit Report Sent To Your Email
+    </p>
+
+    <form id="auditForm">
+      <label for="url">Website URL</label>
+      <input id="url" type="url" placeholder="https://example.com" required>
+
+      <label for="email">Your Email</label>
+      <input id="email" type="email" placeholder="you@email.com" required>
+
+      <button id="btn" type="submit">Run Free Audit</button>
+    </form>
+
+    <div id="status" class="status"></div>
+
+    <footer>
+      Powered by AI · Results sent by email
+    </footer>
+  </div>
+
+  <script>
+    const WEBHOOK_URL = "https://auaanalyzer.app.n8n.cloud/webhook/seo-audit";
+
+    const form = document.getElementById("auditForm");
+    const statusEl = document.getElementById("status");
+    const btn = document.getElementById("btn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      statusEl.textContent = "Running SEO audit… this may take a minute.";
+      statusEl.className = "status";
+      btn.disabled = true;
+
+      const payload = {
+        url: document.getElementById("url").value.trim(),
+        email: document.getElementById("email").value.trim()
+      };
+
+      try {
+        const res = await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          statusEl.textContent = "Success! Check your email for the full SEO report.";
+          statusEl.classList.add("success");
+          form.reset();
+        } else {
+          statusEl.textContent = "Something went wrong. Please try again.";
+          statusEl.classList.add("error");
+        }
+      } catch (err) {
+        statusEl.textContent = "Network error. Please try again later.";
+        statusEl.classList.add("error");
+      }
+
+      btn.disabled = false;
+    });
+  </script>
+
+</body>
+</html>
